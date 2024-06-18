@@ -1,5 +1,0 @@
-aws_region         = "us-east-1"
-vpc_name           = "main-vpc"
-vpc_cidr           = "172.16.0.0/16"
-public_subnet      = "172.16.1.0/24"
-private_subnet     = "172.16.2.0/24"
