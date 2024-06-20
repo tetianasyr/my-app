@@ -4,27 +4,27 @@ resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr
 
   tags = {
-    Name = "vpc-${var.environment}"
+    Name = "vpc-${var.environment}-${local.region}"
   }
 }
 
 resource "aws_subnet" "public" {
-  count = length(var.public_subnet)
+  count = var.public_subnet_count
 
   vpc_id            = aws_vpc.main.id
-  cidr_block        = var.public_subnet[count.index]
+  cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index)
   availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name = "public-subnet-${var.environment}"
+    Name = "public-subnet-${var.environment}-${count.index}"
   }
 }
 
 resource "aws_subnet" "private" {
-  count = length(var.private_subnet)
+  count = var.private_subnet_count
 
   vpc_id            = aws_vpc.main.id
-  cidr_block        = var.private_subnet[count.index]
+  cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + var.public_subnet_count)
   availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
@@ -41,22 +41,22 @@ resource "aws_internet_gateway" "igw" {
 }
 
 resource "aws_nat_gateway" "ngw" {
-  count = length(var.private_subnet)
+  count = var.private_subnet_count
   allocation_id = aws_eip.nat[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
 
   tags = {
-    Name = "nat-gw-${var.environment}"
+    Name = "nat-gw-${var.environment}-${count.index}"
   }
 
   depends_on = [aws_internet_gateway.igw]
 }
 resource "aws_eip" "nat" {
-  count = length(var.private_subnet)
+  count = var.private_subnet_count
   domain = "vpc"
 
   tags = {
-    Name = "nat-eip-${var.environment}"
+    Name = "nat-eip-${var.environment}-${count.index}"
   }
 }
 
@@ -75,13 +75,13 @@ resource "aws_route_table" "public" {
 
 
 resource "aws_route_table_association" "public" {
-  count          = length(var.public_subnet)
+  count          = var.public_subnet_count
   subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public.id
 }
 
 resource "aws_route_table" "private" {
-  count = length(var.private_subnet)
+  count = var.private_subnet_count
   vpc_id = aws_vpc.main.id
 
   route {
@@ -90,12 +90,12 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name = "private-route-table-${var.environment}"
+    Name = "private-route-table-${var.environment}-${count.index}"
   }
 }
 
 resource "aws_route_table_association" "private" {
-  count = length(var.private_subnet)
+  count = var.private_subnet_count
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private[count.index].id
 }
