@@ -4,31 +4,31 @@ resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr
 
   tags = {
-    Name = "vpc-${var.environment}-${local.region}"
+    Name = format("vpc-%s", var.environment)
   }
 }
 
 resource "aws_subnet" "public" {
-  count = var.public_subnet_count
+  count = var.public_subnet_count < length(data.aws_availability_zones.available) ? var.public_subnet_count : length(data.aws_availability_zones.available)
 
   vpc_id            = aws_vpc.main.id
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index)
   availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name = "public-subnet-${var.environment}-${count.index}"
+    Name = format("public-%s-%s-%s", var.environment, count.index, data.aws_availability_zones.available.names[count.index])
   }
 }
 
 resource "aws_subnet" "private" {
-  count = var.private_subnet_count
+  count = var.private_subnet_count < length(data.aws_availability_zones.available) ? var.private_subnet_count : length(data.aws_availability_zones.available)
 
   vpc_id            = aws_vpc.main.id
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + var.public_subnet_count)
   availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name = "private-subnet-${var.environment}-${count.index}"
+    Name = format("private-%s-%s-%s", var.environment, count.index, data.aws_availability_zones.available.names[count.index])
   }
 }
 
@@ -36,7 +36,7 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "main-gw-${var.environment}"
+    Name = format("main-gw-%s", var.environment)
   }
 }
 
@@ -46,7 +46,7 @@ resource "aws_nat_gateway" "ngw" {
   subnet_id     = aws_subnet.public[count.index].id
 
   tags = {
-    Name = "nat-gw-${var.environment}-${count.index}"
+    Name = format("nat-gw-%s-%s", var.environment, count.index)
   }
 
   depends_on = [aws_internet_gateway.igw]
@@ -56,7 +56,7 @@ resource "aws_eip" "nat" {
   domain = "vpc"
 
   tags = {
-    Name = "nat-eip-${var.environment}-${count.index}"
+    Name = format("nat-eip-%s-%s", var.environment, count.index)
   }
 }
 
@@ -69,7 +69,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "public-route-table-${var.environment}"
+    Name = format("public-route-table-%s", var.environment)
   }
 }
 
@@ -90,7 +90,7 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name = "private-route-table-${var.environment}-${count.index}"
+    Name = format("private-route-table-%s-%s", var.environment, count.index)
   }
 }
 

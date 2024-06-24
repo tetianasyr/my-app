@@ -17,3 +17,9 @@ variable "environment" {
   nullable    = false
   description = "The environment name"
 }
+
+variable "ec2_instance_type" {
+  type        = string
+  nullable    = false
+  description = "Type of EC2 instance"
+}

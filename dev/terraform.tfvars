@@ -1,6 +1,7 @@
 region = "us-east-1"
 
 environment = "dev"
+ec2_instance_type = "t2.micro"
 
 vpc_config ={
   dev_vpc1 = {
