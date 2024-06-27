@@ -35,7 +35,7 @@ resource "aws_instance" "private" {
   key_name        = aws_key_pair.ec2.key_name
   iam_instance_profile = var.iam_instance_profile
   subnet_id     = element(var.private_subnets, count.index)
-  vpc_security_group_ids = [aws_security_group.private.id]
+  vpc_security_group_ids = [aws_security_group.public.id]
 
   tags = {
     Name = format("private-instance-%s-%s", var.environment, count.index)
@@ -64,26 +64,26 @@ resource "aws_security_group" "public" {
     Name = format("%s-public-sg", var.environment)
   }
 }
-resource "aws_security_group" "private" {
-  name        = format("%s-private-allow-tls", var.environment)
-  description = "Security group for private instances"
-  vpc_id      = var.vpc_id
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [var.vpc_cidr_block]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name        = format("%s-private-sg", var.environment)
-  }
-}
+# resource "aws_security_group" "private" {
+#   name        = format("%s-private-allow-tls", var.environment)
+#   description = "Security group for private instances"
+#   vpc_id      = var.vpc_id
+#
+#   ingress {
+#     from_port   = 22
+#     to_port     = 22
+#     protocol    = "tcp"
+#     cidr_blocks = [var.vpc_cidr_block]
+#   }
+#
+#   egress {
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "-1"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+#
+#   tags = {
+#     Name        = format("%s-private-sg", var.environment)
+#   }
+# }
