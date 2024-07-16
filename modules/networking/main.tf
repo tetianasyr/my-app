@@ -16,7 +16,8 @@ resource "aws_subnet" "public" {
   availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name = format("public-%s-%s-%s", var.environment, count.index, data.aws_availability_zones.available.names[count.index])
+    Name = format("public-%s-%s-%s", var.environment, count.index, data.aws_availability_zones.available.names[count.index]),
+    type = "public"
   }
 }
 
@@ -29,6 +30,7 @@ resource "aws_subnet" "private" {
 
   tags = {
     Name = format("private-%s-%s-%s", var.environment, count.index, data.aws_availability_zones.available.names[count.index])
+    type = "private"
   }
 }
 
