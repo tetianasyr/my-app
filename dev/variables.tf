@@ -29,10 +29,26 @@ variable "ssh_public_key" {
   description = "The public key"
   default = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDHWFgsy2l1lLDwfj2C3B/t0YVpoqgky+UCVwQ0iZaoVgHdttHGDyofHI+1satsL1Mwj/l1T8YibyKBGPt2SHnUGNuxeqtHeiUM5AqrxQzUZ7Tml6+3lI0IVFeuvE8rltHfCHbm7rqcMr7Z1VP4Svoz52elDJyV1TrfBwxVGJl7MsrIh3nsTqCM/Ske0fgJUpuVJyOcyqT0IeKmshGqFg8QyYhvvZFBNslSBMc4ku/YGXbnPxcYg9Lf/fJpFY6NBVt6+vRQzrQcDJWvhFPdPPtOVN6/Tj62kC8BNfQ+RQmXBACLOGRjlRFAJyrSr2PoxwjPjxuOpqncKtWEBiW5EZnsSnPeQUVg3D3UVosltOFet8Jhssp6gKcHMPcIAj+Gjnd15UNhyKNX84hV9ZKPGY5/LgQ3V/eAIMqhJQX2sacnG+/zSS8OcWLRFsLGXPR1rNKlrWYSZCgqr/0k7g05DLa89ct/vkMbL9PU3czh9mgiw0lcSDiIXc9g3wqVI6BuuuL3cTwvzOUx+0sy9at2RxhtCEa4tvy2m2HrH5NG+8+5X0G2sntTgt+pQQUZDWAJ95Wq9DzKNpqFBQGz2HBLatnxsPxM25qGJI/pDizvRCHsmRY2C1yVXTsPUXxW43DL5zsm7LnH43bgvW+HVXF3AeUYHXQdX/dgKmiwqxfgdOUasQ== tsyrov@CL6D7LP62G"
 }
+
+# variable "ecs_task_execution_role" {
+#   type = string
+#   description = "The ECS task execution role"
+# }
+#
 variable "app_name" {
   type = string
   description = "Application name"
 }
+#
+# variable "image_tag" {
+#   type = string
+#   description = "Image tag"
+# }
+#
+# variable "taskdef_template" {
+#   description = "Path to the ECS task definition template file."
+# }
+#
 variable "app_image" {
   type = string
   description = "Docker image to run in the ECS cluster"

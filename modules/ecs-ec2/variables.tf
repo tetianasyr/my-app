@@ -24,6 +24,17 @@ variable "vpc_cidr_block" {
   description = "The CIDR block of the VPC"
 }
 
+variable "ssh_public_key" {
+  type        = string
+  description = "The public key"
+}
+
+variable "ec2_instance_type" {
+  type        = string
+  nullable    = false
+  description = "Type of EC2 instance"
+}
+
 variable "app_name" {
   type = string
   description = "Application name"

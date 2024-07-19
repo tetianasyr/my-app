@@ -29,7 +29,8 @@ module "vpc" {
 # }
 
 module "ecs" {
-  source = "../modules/ecs"
+#   source = "../modules/ecs"
+  source = "../modules/ecs-ec2"
 
   for_each = var.vpc_config
 
@@ -41,9 +42,6 @@ module "ecs" {
   vpc_cidr_block       = module.vpc[each.key].vpc_cidr_block
   private_subnets      = module.vpc[each.key].private_subnets
   public_subnets       = module.vpc[each.key].public_subnets
-  ssh_public_key = ""
-}
-
-output "subnets" {
-  value = module.vpc
+  ssh_public_key       = var.ssh_public_key
+  ec2_instance_type   = var.ec2_instance_type
 }
