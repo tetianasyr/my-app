@@ -1,5 +1,6 @@
 region = "us-east-1"
 
+ecs_cluster_name = "myapp-cluster"
 environment = "dev"
 ec2_instance_type = "t2.micro"
 app_name = "my-petapp"

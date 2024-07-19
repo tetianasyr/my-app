@@ -34,14 +34,16 @@ module "ecs" {
 
   for_each = var.vpc_config
 
-  app_name             = var.app_name
-  environment          = var.environment
-  app_image            = var.app_image
   region               = var.region
   vpc_id               = module.vpc[each.key].vpc_id
   vpc_cidr_block       = module.vpc[each.key].vpc_cidr_block
   private_subnets      = module.vpc[each.key].private_subnets
   public_subnets       = module.vpc[each.key].public_subnets
   ssh_public_key       = var.ssh_public_key
-  ec2_instance_type   = var.ec2_instance_type
+
+  app_image         = var.app_image
+  app_name          = var.app_name
+  ec2_instance_type = var.ec2_instance_type
+  ecs_cluster_name  = var.ecs_cluster_name
+  environment       = var.environment
 }

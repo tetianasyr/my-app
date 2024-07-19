@@ -1,9 +1,9 @@
 resource "aws_ecs_cluster" "ecs_cluster" {
-  name = "ecs-cluster-myapp"
+  name = "${local.ecs_cluster_name}"
 }
 
 resource "aws_ecs_capacity_provider" "ecs_capacity_provider" {
-  name = "test_capacity_provider"
+  name = "test_app_capacity_provider"
 
   auto_scaling_group_provider {
     auto_scaling_group_arn = aws_autoscaling_group.ecs-asg.arn
@@ -33,12 +33,12 @@ data "template_file" "my_app" {
   template = file("${path.module}/tdt_app.json.tpl")
 
   vars = {
-    app_image = var.app_image
+    app_image = local.app_image
     app_port = 80
     fargate_cpu = "10"
-    aws_region = var.region
-    env = var.environment
-    app_name = var.app_name
+    aws_region = local.region
+    env = local.environment
+    app_name = local.app_name
   }
 }
 
@@ -68,7 +68,7 @@ resource "aws_ecs_service" "main" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.ecs_tg.arn
-    container_name   = var.app_name
+    container_name   = local.app_name
     container_port   = 80
   }
 

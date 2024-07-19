@@ -49,3 +49,8 @@ variable "app_image" {
   type = string
   description = "Docker image to run in the ECS cluster"
 }
+
+variable "ecs_cluster_name" {
+  type = string
+  description = "The name of ECS cluster"
+}

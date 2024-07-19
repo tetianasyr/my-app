@@ -5,12 +5,12 @@ resource "aws_lb" "ecs_alb" {
   subnets            = local.subnet_ids
 
   tags = {
-    Name = format("ecs-alb-%s",var.environment)
+    Name = format("ecs-alb-%s",local.environment)
   }
 }
 
 resource "aws_lb_target_group" "ecs_tg" {
-  name        = "ecs-target-group-${var.environment}"
+  name        = "ecs-target-group-${local.environment}"
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"

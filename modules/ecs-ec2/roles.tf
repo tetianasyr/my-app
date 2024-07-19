@@ -1,5 +1,5 @@
 resource "aws_iam_role" "ecs_ec2_role" {
-  name = "ecs-ec2-role"
+  name = "ecsEC2Role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -16,7 +16,7 @@ resource "aws_iam_role" "ecs_ec2_role" {
 }
 
 resource "aws_iam_instance_profile" "ecs_ec2_profile" {
-  name = "ecs_ec2_profile"
+  name = "EcsEC2Profile"
   role = aws_iam_role.ecs_ec2_role.name
 }
 
@@ -26,7 +26,7 @@ resource "aws_iam_role_policy_attachment" "ecs_role_policy" {
 }
 
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "ecsTaskExecutionRole"
+  name = "ecs-Task-ExecutionRole"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -43,7 +43,7 @@ resource "aws_iam_role" "ecs_task_execution_role" {
 }
 
 resource "aws_iam_instance_profile" "ecs_task_execution_role" {
-  name = "ecs-task-execution-role-pro"
+  name = "ecsTaskExecutionRoleProfile"
   role = aws_iam_role.ecs_task_execution_role.name
 }
 
