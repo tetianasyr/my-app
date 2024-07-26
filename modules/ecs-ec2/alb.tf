@@ -1,8 +1,13 @@
+data "aws_subnet" "public_subnets" {
+  count = length(var.public_subnets)
+  id = element(var.public_subnets, count.index)
+}
+
 resource "aws_lb" "ecs_alb" {
   name               = "ecs-alb-${var.environment}"
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = local.subnet_ids
+  subnets            = local.public_subnet_ids
 
   tags = {
     Name = format("ecs-alb-%s",local.environment)
@@ -46,7 +51,7 @@ resource "aws_security_group" "alb_sg" {
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "-1"
+    protocol    = -1
     cidr_blocks = ["0.0.0.0/0"]
   }
 }

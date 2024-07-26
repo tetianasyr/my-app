@@ -2,7 +2,7 @@
     {
         "name": "${app_name}",
         "image": "${app_image}",
-        "cpu": ${fargate_cpu},
+        "cpu": ${cpu},
         "portMappings": [
             {
                 "containerPort": ${app_port},

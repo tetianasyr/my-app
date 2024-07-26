@@ -12,5 +12,11 @@ terraform {
       version = "~> 5.49"
     }
   }
+
+#   backend "s3" {
+#     bucket = "myapppet-terraform-bucket"
+#     key    = "state/terraform_state.tfstate"
+#     region = "us-east-1"
+#   }
 }
 

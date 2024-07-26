@@ -35,7 +35,7 @@ data "template_file" "my_app" {
   vars = {
     app_image = local.app_image
     app_port = 80
-    fargate_cpu = "10"
+    cpu = "10"
     aws_region = local.region
     env = local.environment
     app_name = local.app_name
@@ -53,6 +53,7 @@ resource "aws_ecs_task_definition" "myapp_task" {
     cpu_architecture        = "X86_64"
   }
   container_definitions = data.template_file.my_app.rendered
+  requires_compatibilities = ["EC2","FARGATE"]
 }
 
 resource "aws_ecs_service" "main" {
@@ -82,4 +83,23 @@ resource "aws_ecs_service" "main" {
     weight            = 100
   }
   depends_on = [aws_lb_listener.ecs_alb_listener, aws_autoscaling_group.ecs-asg]
+}
+
+resource "aws_security_group" "ecs_sg" {
+  name        = "ecs-sg"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }

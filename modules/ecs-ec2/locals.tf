@@ -1,6 +1,7 @@
 locals {
   region = var.region
-  subnet_ids = [for subnet in data.aws_subnet.subnets : subnet.id]
+  public_subnet_ids = [for subnet in data.aws_subnet.public_subnets : subnet.id]
+  private_subnet_ids = [for subnet in data.aws_subnet.private_subnets : subnet.id]
 
   ecs_cluster_name = var.ecs_cluster_name
   environment = var.environment
