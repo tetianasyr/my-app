@@ -3,13 +3,31 @@ variable "region" {
   type        = string
 }
 
-variable "vpc_config" {
-  description = "A map of VPC configurations"
-  type = map(object({
-    vpc_cidr             = string
-    public_subnet_count  = number
-    private_subnet_count = number
-  }))
+# variable "vpc_config" {
+#   description = "A map of VPC configurations"
+#   type = map(object({
+#     vpc_cidr             = string
+#     public_subnet_count  = number
+#     private_subnet_count = number
+#   }))
+# }
+
+variable "vpc_cidr" {
+  type = string
+  nullable = false
+  description = "The CIDR block for the VPC"
+}
+
+variable "public_subnet_count" {
+  type        = number
+  nullable    = false
+  description = "The list of CIDR blocks for the public subnet"
+}
+
+variable "private_subnet_count" {
+  type        = number
+  nullable    = false
+  description = "The list of CIDR blocks for the private subnet"
 }
 
 variable "ssh_public_key" {

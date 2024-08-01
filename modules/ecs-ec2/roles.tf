@@ -47,7 +47,30 @@ resource "aws_iam_instance_profile" "ecs_task_execution_role" {
   role = aws_iam_role.ecs_task_execution_role.name
 }
 
+resource "aws_iam_policy" "custom_ecs_task_execution_policy" {
+  name        = "customEcsTaskExecutionPolicy"
+  description = "Custom policy for ECS task execution role"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = [
+          "ecr:GetAuthorizationToken",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "ecr:BatchCheckLayerAvailability",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:CreateLogGroup"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
   role       = aws_iam_role.ecs_task_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+  policy_arn = aws_iam_policy.custom_ecs_task_execution_policy.arn
 }

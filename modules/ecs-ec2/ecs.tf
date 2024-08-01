@@ -35,7 +35,7 @@ data "template_file" "my_app" {
   vars = {
     app_image = local.app_image
     app_port = 80
-    cpu = "10"
+    cpu = 256
     aws_region = local.region
     env = local.environment
     app_name = local.app_name
@@ -52,6 +52,12 @@ resource "aws_ecs_task_definition" "myapp_task" {
     operating_system_family = "LINUX"
     cpu_architecture        = "X86_64"
   }
+  cpu                      = 256
+  memory                   = 512
+#   runtime_platform {
+#     operating_system_family = "LINUX"
+#     cpu_architecture        = "X86_64"
+#   }
   container_definitions = data.template_file.my_app.rendered
   requires_compatibilities = ["EC2","FARGATE"]
 }

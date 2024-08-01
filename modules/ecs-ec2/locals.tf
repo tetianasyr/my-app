@@ -7,5 +7,5 @@ locals {
   environment = var.environment
   ec2_instance_type = var.ec2_instance_type
   app_name = var.app_name
-  app_image = var.app_name
+  app_image = var.app_image
 }

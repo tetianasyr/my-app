@@ -8,14 +8,6 @@ data "aws_ami" "amazon_ecs_linux" {
   owners      = ["amazon"]
 }
 
-data "template_file" "ecs-cluster" {
-  template = filebase64("${path.module}/ecs.tpl")
-
-  vars = {
-    cluster_name = aws_ecs_cluster.ecs_cluster.name
-  }
-}
-
 resource "aws_key_pair" "ec2" {
   key_name = format("%s-ec2-key", local.environment)
   public_key = var.ssh_public_key
@@ -37,11 +29,10 @@ resource "aws_launch_template" "ecs_ec2_lt" {
   iam_instance_profile {
     name = aws_iam_instance_profile.ecs_ec2_profile.name
   }
-
-  user_data = data.template_file.ecs-cluster.rendered
+  user_data = base64encode(templatefile("${path.module}/ecs.sh", {ecs_cluster_name=local.ecs_cluster_name}))
 
   network_interfaces {
-    associate_public_ip_address = true
+    associate_public_ip_address = false
     security_groups = [aws_security_group.ecs_node_sg.id]
   }
 
@@ -59,6 +50,14 @@ resource "aws_security_group" "ecs_node_sg" {
   name_prefix = "ecs-node-sg"
   vpc_id      = var.vpc_id
 
+  ingress {
+    description     = "Allow ingress traffic from ALB on HTTP on ephemeral ports"
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr_block]
+  }
+
   egress {
     from_port   = 0
     to_port     = 65535
@@ -68,7 +67,6 @@ resource "aws_security_group" "ecs_node_sg" {
 }
 
 resource "aws_instance" "public" {
-  count           = length(var.public_subnets)
   ami             = data.aws_ami.amazon_linux.id
   instance_type   = local.ec2_instance_type
   key_name        = aws_key_pair.ec2.key_name
@@ -78,7 +76,7 @@ resource "aws_instance" "public" {
   associate_public_ip_address = true
 
   tags = {
-    Name = format("public-instance-%s-%s", var.environment, count.index)
+    Name = format("public-instance-%s", var.environment)
   }
 }
 
