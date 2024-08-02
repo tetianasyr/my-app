@@ -4,12 +4,6 @@ variable "environment" {
   description = "The environment name"
 }
 
-variable "ec2_instance_type" {
-  type        = string
-  nullable    = false
-  description = "Type of EC2 instance"
-}
-
 variable "public_subnets" {
   type        = list(string)
   description = "A list of public subnet IDs"
@@ -35,7 +29,28 @@ variable "ssh_public_key" {
   description = "The public key"
 }
 
-variable "iam_instance_profile" {
+variable "ec2_instance_type" {
+  type        = string
+  nullable    = false
+  description = "Type of EC2 instance"
+}
+
+variable "app_name" {
   type = string
-  description = "The IAM instance profile"
+  description = "Application name"
+}
+
+variable "region" {
+  type        = string
+  description = "The AWS region to deploy in"
+}
+
+variable "app_image" {
+  type = string
+  description = "Docker image to run in the ECS cluster"
+}
+
+variable "ecs_cluster_name" {
+  type = string
+  description = "The name of ECS cluster"
 }
