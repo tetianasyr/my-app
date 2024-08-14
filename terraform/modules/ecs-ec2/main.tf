@@ -9,7 +9,7 @@ data "aws_ami" "amazon_ecs_linux" {
 }
 
 resource "aws_key_pair" "ec2" {
-  key_name = format("%s-ec2-key", local.environment)
+  key_name = format("%s-ec2-key", var.environment)
   public_key = var.ssh_public_key
 }
 
@@ -24,7 +24,7 @@ resource "aws_launch_template" "ecs_ec2_lt" {
   }
 
   image_id      = data.aws_ami.amazon_ecs_linux.id
-  instance_type = local.ec2_instance_type
+  instance_type = var.ec2_instance_type
   key_name      = aws_key_pair.ec2.key_name
   iam_instance_profile {
     name = aws_iam_instance_profile.ecs_ec2_profile.name
@@ -68,7 +68,7 @@ resource "aws_security_group" "ecs_node_sg" {
 
 resource "aws_instance" "public" {
   ami             = data.aws_ami.amazon_linux.id
-  instance_type   = local.ec2_instance_type
+  instance_type   = var.ec2_instance_type
   key_name        = aws_key_pair.ec2.key_name
   iam_instance_profile = aws_iam_instance_profile.ecs_ec2_profile.name
   subnet_id       = local.public_subnet_ids[0]

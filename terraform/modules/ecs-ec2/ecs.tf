@@ -1,9 +1,9 @@
 resource "aws_ecs_cluster" "ecs_cluster" {
-  name = "${local.ecs_cluster_name}"
+  name = local.ecs_cluster_name
 }
 
 resource "aws_ecs_capacity_provider" "ecs_capacity_provider" {
-  name = "test_app_capacity_provider"
+  name = format("test_app_capacity_provider-%s", var.environment)
 
   auto_scaling_group_provider {
     auto_scaling_group_arn = aws_autoscaling_group.ecs-asg.arn
@@ -12,7 +12,7 @@ resource "aws_ecs_capacity_provider" "ecs_capacity_provider" {
       maximum_scaling_step_size = 1000
       minimum_scaling_step_size = 1
       status                    = "ENABLED"
-      target_capacity           = 3
+      target_capacity           = var.app_count
     }
   }
 }
@@ -35,25 +35,19 @@ data "template_file" "my_app" {
   vars = {
     app_image = local.app_image
     app_port = 80
-    cpu = 256
-    aws_region = local.region
-    env = local.environment
+    cpu = var.task_cpu
+    aws_region = var.region
+    env = var.environment
     app_name = local.app_name
   }
 }
 
 resource "aws_ecs_task_definition" "myapp_task" {
-  family                   = "${var.app_name}-${var.environment}-task"
+  family                   = "${local.app_name}-${var.environment}-task"
   network_mode             = "awsvpc"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
-  cpu                      = 1024
-  memory                   = 2048
-  runtime_platform {
-    operating_system_family = "LINUX"
-    cpu_architecture        = "X86_64"
-  }
-  cpu                      = 256
-  memory                   = 512
+  cpu                      = var.task_cpu
+  memory                   = var.task_memory
 #   runtime_platform {
 #     operating_system_family = "LINUX"
 #     cpu_architecture        = "X86_64"
@@ -63,10 +57,10 @@ resource "aws_ecs_task_definition" "myapp_task" {
 }
 
 resource "aws_ecs_service" "main" {
-  name            = "${var.app_name}-${var.environment}-service"
+  name            = "${local.app_name}-${var.environment}-service"
   cluster         = aws_ecs_cluster.ecs_cluster.id
   task_definition = aws_ecs_task_definition.myapp_task.arn
-  desired_count   = 1
+  desired_count   = var.app_count
 
   network_configuration {
     subnets         = var.private_subnets

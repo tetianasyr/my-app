@@ -1,5 +1,5 @@
 module "vpc" {
-  source = "../modules/networking"
+  source = "./modules/networking"
 
   region = var.region
   environment = var.environment
@@ -7,6 +7,23 @@ module "vpc" {
   vpc_cidr = var.vpc_cidr
   public_subnet_count = var.public_subnet_count
   private_subnet_count = var.private_subnet_count
+}
+
+module "ecs" {
+#   source = "../modules/ecs"
+  source = "./modules/ecs-ec2"
+
+  region               = var.region
+  vpc_id               = module.vpc.vpc_id
+  vpc_cidr_block       = module.vpc.vpc_cidr_block
+  private_subnets      = module.vpc.private_subnets
+  public_subnets       = module.vpc.public_subnets
+  ssh_public_key       = var.ssh_public_key
+  ec2_instance_type    = var.ec2_instance_type
+  environment          = var.environment
+  task_cpu             = var.task_cpu
+  task_memory          = var.task_memory
+  build_version        = var.build_version
 }
 
 # module "ec2" {
@@ -25,21 +42,3 @@ module "vpc" {
 #
 #   depends_on = [module.ecs, module.vpc]
 # }
-
-module "ecs" {
-#   source = "../modules/ecs"
-  source = "../modules/ecs-ec2"
-
-  region               = var.region
-  vpc_id               = module.vpc.vpc_id
-  vpc_cidr_block       = module.vpc.vpc_cidr_block
-  private_subnets      = module.vpc.private_subnets
-  public_subnets       = module.vpc.public_subnets
-  ssh_public_key       = var.ssh_public_key
-
-  app_image         = var.app_image
-  app_name          = var.app_name
-  ec2_instance_type = var.ec2_instance_type
-  environment       = var.environment
-  ecs_cluster_name  = var.ecs_cluster_name
-}

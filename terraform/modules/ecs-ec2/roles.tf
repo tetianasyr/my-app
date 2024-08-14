@@ -16,7 +16,7 @@ resource "aws_iam_role" "ecs_ec2_role" {
 }
 
 resource "aws_iam_instance_profile" "ecs_ec2_profile" {
-  name = "EcsEC2Profile"
+  name = "ECS_EC2Profile"
   role = aws_iam_role.ecs_ec2_role.name
 }
 
